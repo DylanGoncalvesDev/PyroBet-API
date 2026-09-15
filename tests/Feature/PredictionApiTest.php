@@ -21,4 +21,14 @@ class PredictionApiTest extends TestCase
        $response->assertStatus(401);
     }
 
+     public function testUserCanListPredictions(): void
+    {
+        $player = User::factory()->create(['role' => 'user']);
+
+        Passport::actingAs($player);
+
+        $response = $this->getJson('/api/predictions');
+
+        $response->assertStatus(200);
+    }
 }
