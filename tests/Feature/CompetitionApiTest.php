@@ -30,4 +30,22 @@ class CompetitionApiTest extends TestCase
 
         $response->assertStatus(200);
     }
+
+     public function testUserCanCreateCompetitions(): void
+    {
+       $player = User::factory()->create(['role' => 'admin']);
+
+       Passport::actingAs($player);
+
+       $response = $this->postJson('/api/competitions', [
+            'name' => 'La Liga',
+            'status' => 'in_progress',
+            'start_date' => '2026-08-25 00:00:00',
+            'end_date' => '2027-07-15 00:00:00',
+       ]);
+
+       $response->assertStatus(201);
+    }
+
+    
 }
