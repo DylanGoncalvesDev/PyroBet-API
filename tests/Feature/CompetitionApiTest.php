@@ -74,5 +74,21 @@ class CompetitionApiTest extends TestCase
         ]);
     }
 
+    public function testUserCanDeleteCompetitions(): void
+    {
+        $player = User::factory()->create(['role' => 'admin']);
+        
+         $competition = Competition::create([
+            'name' => 'La Liga',
+            'status' => 'in_progress',
+            'start_date' => '2026-08-25 00:00:00',
+            'end_date' => '2027-07-15 00:00:00',
+        ]);
 
+        Passport::actingAs($player);
+
+        $response = $this->deleteJson("/api/competitions/{$competition->id}");
+
+        $response->assertStatus(200);
+    }
 }
