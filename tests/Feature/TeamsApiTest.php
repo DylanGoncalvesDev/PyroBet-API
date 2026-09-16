@@ -38,7 +38,7 @@ class TeamsApiTest extends TestCase
        Passport::actingAs($player);
 
        $response = $this->postJson('/api/teams', [
-            'name' => 'Real Madrid',
+            'name' => 'Real Madrid FC',
             'logo' => 'realmadrid.png',
             'country' => 'España',
             'founded_at' => '1989',
@@ -49,4 +49,34 @@ class TeamsApiTest extends TestCase
        $response->assertStatus(201);
     }
 
+     public function testUserCanUpdateTeams(): void
+    {
+        $player = User::factory()->create(['role' => 'admin']);
+        
+        $team = Team::create([
+            'name' => 'Real Madrid FC',
+            'logo' => 'realmadrid.png',
+            'country' => 'España',
+            'founded_at' => '1989',
+            'type' => 'club',
+            'sport' => 'soccer football',
+        ]);
+
+        Passport::actingAs($player);
+
+        $response = $this->putJson("/api/teams/{$team->id}", [
+            'name' => 'Barcelona FC',
+            'logo' => 'barca.png',
+            'founded_at' => '1888',
+        ]);
+
+        $response->assertStatus(200);
+
+        $this->assertDatabaseHas('teams', [
+            'id' => $team->id,
+            'name' => 'Barcelona FC',
+            'logo' => 'barca.png',
+            'founded_at' => '1888',
+        ]);
+    }
 }
