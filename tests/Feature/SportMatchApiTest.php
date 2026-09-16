@@ -20,4 +20,17 @@ class SportMatchApiTest extends TestCase
        $response->assertStatus(401);
     }
 
+    public function testUserCanListMatches(): void
+    {
+        $player = User::factory()->create(['role' => 'user']);
+
+        $match = SportMatch::factory()->create();
+
+        Passport::actingAs($player);
+
+        $response = $this->getJson('/api/matches');
+
+        $response->assertStatus(200);
+    }
+    
 }
