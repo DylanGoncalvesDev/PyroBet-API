@@ -13,7 +13,7 @@ class TeamsApiTest extends TestCase
 {
     public function testCannotAccessWithoutAuthenticationToken(): void
     {
-       $response = $this->getJson('/api/matches');
+       $response = $this->getJson('/api/teams');
 
        $response->assertStatus(401);
     }
@@ -78,5 +78,25 @@ class TeamsApiTest extends TestCase
             'logo' => 'barca.png',
             'founded_at' => '1888',
         ]);
+    }
+
+     public function testUserCanDeleteTeams(): void
+    {
+        $player = User::factory()->create(['role' => 'admin']);
+        
+         $team = Team::create([
+            'name' => 'Real Madrid FC',
+            'logo' => 'realmadrid.png',
+            'country' => 'España',
+            'founded_at' => '1989',
+            'type' => 'club',
+            'sport' => 'soccer football',
+        ]);
+
+        Passport::actingAs($player);
+
+        $response = $this->deleteJson("/api/teams/{$team->id}");
+
+        $response->assertStatus(200);
     }
 }
