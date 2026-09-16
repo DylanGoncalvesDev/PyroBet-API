@@ -50,4 +50,37 @@ class PredictionApiTest extends TestCase
 
        $response->assertStatus(201);
     }
+
+     public function testUserCanUpdatePredictions(): void
+    {
+        $player = User::factory()->create(['role' => 'user']);
+
+        $match = SportMatch::factory()->create();
+        
+        $prediction = Prediction::create([
+            'user_id' => $player->id,
+            'match_id' => $match->id,
+            'prediction' => 'home',
+            'home_score_prediction' => 2,
+            'away_score_prediction' => 1,
+            'status' => 'pending'
+        ]);
+
+        Passport::actingAs($player);
+
+        $response = $this->putJson("/api/predictions/{$prediction->id}", [
+            'prediction' => 'draw',
+            'home_score_prediction' => 1,
+            'away_score_prediction' => 1,
+        ]);
+
+        $response->assertStatus(200);
+
+        $this->assertDatabaseHas('predictions', [
+            'id' => $prediction->id,
+            'prediction' => 'draw',
+            'home_score_prediction' => 1,
+            'away_score_prediction' => 1,
+        ]);
+    }
 }
