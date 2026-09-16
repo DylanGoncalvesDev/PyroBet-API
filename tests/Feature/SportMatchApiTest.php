@@ -2,8 +2,10 @@
 
 namespace Tests\Feature;
 
+use App\Models\Competition;
 use App\Models\User;
 use App\Models\SportMatch;
+use App\Models\Team;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Laravel\Passport\Passport;
@@ -31,6 +33,31 @@ class SportMatchApiTest extends TestCase
         $response = $this->getJson('/api/matches');
 
         $response->assertStatus(200);
+    }
+
+     public function testUserCanCreateMatches(): void
+    {
+       $player = User::factory()->create(['role' => 'admin']);
+
+       $team = Team::factory()->create();
+       $team2 = Team::factory()->create();
+
+       $competition = Competition::factory()->create();
+
+       Passport::actingAs($player);
+
+       $response = $this->postJson('/api/matches', [
+            'home_team_id' => $team->id,
+            'away_team_id' => $team2->id,
+            'date' => '2026-09-16 21:00:00',
+            'location' => 'alianz arena',
+            'stage' => 'jornada', 
+            'status' => 'upcoming', 
+            'sport' => 'futbol', 
+            'competition_id' => $competition->id
+       ]);
+
+       $response->assertStatus(201);
     }
     
 }
