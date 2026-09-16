@@ -94,5 +94,32 @@ class SportMatchApiTest extends TestCase
             'away_team_score' => 1,
         ]);
     }
+
+    public function testUserCanDeleteMatches(): void
+    {
+        $player = User::factory()->create(['role' => 'admin']);
+
+        $team = Team::factory()->create();
+        $team2 = Team::factory()->create();
+
+        $competition = Competition::factory()->create();
+
+        $match = SportMatch::factory()->create([
+            'home_team_id' => $team->id,
+            'away_team_id' => $team2->id,
+            'date' => '2026-09-16 21:00:00',
+            'location' => 'alianz arena',
+            'stage' => 'jornada', 
+            'status' => 'upcoming', 
+            'sport' => 'futbol', 
+            'competition_id' => $competition->id
+        ]);
+
+        Passport::actingAs($player);
+
+        $response = $this->deleteJson("/api/matches/{$match->id}");
+
+        $response->assertStatus(200);
+    }
     
 }
