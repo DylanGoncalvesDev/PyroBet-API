@@ -30,4 +30,23 @@ class TeamsApiTest extends TestCase
 
         $response->assertStatus(200);
     }
+
+    public function testUserCanCreateTeams(): void
+    {
+       $player = User::factory()->create(['role' => 'admin']);
+
+       Passport::actingAs($player);
+
+       $response = $this->postJson('/api/teams', [
+            'name' => 'Real Madrid',
+            'logo' => 'realmadrid.png',
+            'country' => 'España',
+            'founded_at' => '1989',
+            'type' => 'club',
+            'sport' => 'soccer football',
+       ]);
+
+       $response->assertStatus(201);
+    }
+
 }
