@@ -47,5 +47,32 @@ class CompetitionApiTest extends TestCase
        $response->assertStatus(201);
     }
 
-    
+    public function testUserCanUpdateCompetitions(): void
+    {
+        $player = User::factory()->create(['role' => 'admin']);
+        
+        $competition = Competition::create([
+            'name' => 'La Liga',
+            'status' => 'in_progress',
+            'start_date' => '2026-08-25 00:00:00',
+            'end_date' => '2027-07-15 00:00:00',
+        ]);
+
+        Passport::actingAs($player);
+
+        $response = $this->putJson("/api/competitions/{$competition->id}", [
+            'name' => 'Serie A',
+            'status' => 'in_progress',
+        ]);
+
+        $response->assertStatus(200);
+
+        $this->assertDatabaseHas('competitions', [
+            'id' => $competition->id,
+            'name' => 'Serie A',
+            'status' => 'in_progress',
+        ]);
+    }
+
+
 }
