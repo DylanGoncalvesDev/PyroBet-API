@@ -83,4 +83,26 @@ class PredictionApiTest extends TestCase
             'away_score_prediction' => 1,
         ]);
     }
+
+    public function testUserCanDeletePredictions(): void
+    {
+        $player = User::factory()->create(['role' => 'user']);
+
+        $match = SportMatch::factory()->create();
+        
+        $prediction = Prediction::create([
+            'user_id'               => $player->id,
+            'match_id'              => $match->id,
+            'prediction'            => 'home',
+            'home_score_prediction' => 2,
+            'away_score_prediction' => 1,
+            'status'                => 'pending'
+        ]);
+
+        Passport::actingAs($player);
+
+        $response = $this->deleteJson("/api/predictions/{$prediction->id}");
+
+        $response->assertStatus(200);
+    }
 }
