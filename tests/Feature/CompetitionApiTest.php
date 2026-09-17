@@ -11,6 +11,8 @@ use Tests\TestCase;
 
 class CompetitionApiTest extends TestCase
 {
+    use RefreshDatabase;
+    
     public function testCannotAccessWithoutAuthenticationToken(): void
     {
        $response = $this->getJson('/api/competitions');

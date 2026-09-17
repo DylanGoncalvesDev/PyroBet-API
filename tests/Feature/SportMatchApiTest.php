@@ -121,5 +121,4 @@ class SportMatchApiTest extends TestCase
 
         $response->assertStatus(200);
     }
-    
 }
